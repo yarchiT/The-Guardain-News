@@ -12,10 +12,11 @@
         <li class="media" v-for="article in articles">
 
           <div class="media-body" >
-            <h4 class="media-heading">
-              <a v-bind:href="article.url" target="_blank">{{article.title}}</a>
-            </h4>
-           <!-- <p>{{article.description}}</p>-->
+            <button class="accordion">{{article.title}}</button>
+            <div class="panel">
+              <p>{{article.description}}</p>
+              <a v-bind:href="article.url" target="_blank">Read full news</a>
+            </div>
           </div>
 
         </li>
@@ -40,27 +41,65 @@
           .then(response =>{
             this.articles = response.data.articles;
             console.log("UPDATED");
-          }).catch(function (e) {
+            this.showDescription();
+          }).catch(function () {
             alert("Sorry, we could find news for you. PLease try again later")
             console.log("EXCEPTION");
         })
+      },
+      showDescription: function(){
+       console.log("show");
+
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        console.log(acc.length);
+        if(acc.length ===0 ) this.updateSource();
+        for (i = 0; i < acc.length; i++) {
+          acc[i].onclick = function(){
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+              panel.style.display = "none";
+            } else {
+              panel.style.display = "block";
+            }
+          }
+        }
       }
     },
     created: function(){
-      this.updateSource(this.source)
+      console.log("CREATED");
+     this.updateSource();
     }
   }
+
 </script>
 
 <style scoped>
-  .media {
-    border-top: 1px solid lightgray;
-    padding-top: 20px;
-  }
+
   .jumbotron{
     text-align: center;
   }
-  #updateButton{
-
+  button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
   }
+  button.accordion.active, button.accordion:hover {
+    background-color: #ccc;
+  }
+
+  div.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+  }
+
 </style>
